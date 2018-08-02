@@ -8,17 +8,17 @@ CON = {}
 
 # 断句
 def break_sentence(strings):
-    splited = re.split(r'[\n\r \r\n   ,，\s。 }{]', strings, flags=re.M)
+    splited = re.split(r'[\n\r \r\n   ,，\s。 }{）、（：=\d》《.”? ― ]', strings, flags=re.M)
     return splited
 
 
 # 断词
-def break_word(string):
+def break_word(string, maxword_length):
     lens = len(string)
     # 默认取长度为2及以上的为词
     if lens >= 2:
         for i in range(lens):
-            for j in range(i, lens):
+            for j in range(i, maxword_length + 1):
                 word = string[i:j]
                 count(word, string[i-1: i], string[i: i+1])
 
@@ -77,7 +77,7 @@ def main(string, minwords=2, maxwords=5):
     sentences = break_sentence(string)
     for sentence in sentences:
         if sentence:
-            break_word(sentence)
+            break_word(sentence, maxwords)
 
     # 计算自由度
     for k, v in CON.items():
@@ -92,9 +92,9 @@ def main(string, minwords=2, maxwords=5):
 
     # 过滤结果输出
     for k, v in CON.items():
-        if v[0] > 1 and len(k) >= minwords:
+        if v[0] > 1 and len(k) >= minwords and v[-2] > 0 and v[-1] > 0:
             print(k, v[0], v[-2], v[-1])
-        
+
 
 if __name__ == '__main__':
     main("""电影院的电影影院的电影""")
