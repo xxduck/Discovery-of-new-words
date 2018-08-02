@@ -1,31 +1,31 @@
 # -*- coding=utf-8 -*-
-import math, re
+import math
+import re
 
-s = """电影院的电影"""
 
 CON = {}
 
 
 # 断句
 def break_sentence(strings):
-    splited = re.split(r'[\n\r \r\n   ,，\s。 ]', strings, flags=re.M)
+    splited = re.split(r'[\n\r \r\n   ,，\s。 }{]', strings, flags=re.M)
     return splited
 
+
 # 断词
-def break_word(string, min_str=4, max_str=10):
+def break_word(string):
     lens = len(string)
-    if lens > min_str:
+    # 默认取长度为2及以上的为词
+    if lens >= 2:
         for i in range(lens):
-            if len(string[i:]) > min_str:
-                for j in range(i, i+max_str):
-                    word = string[i:j]
-                    count(word, string[i-1: i], string[i: i+1])
+            for j in range(i, lens):
+                word = string[i:j]
+                count(word, string[i-1: i], string[i: i+1])
 
 
 # 统计词频，计算自由度，凝合程度
 def count(word, left, right):
     # 参数： 词，左邻字，右邻字
-
 
     if word in CON:
         CON[word][0] += 1
@@ -57,6 +57,7 @@ def coagulability():
         else:
             CON[k].append(0)
 
+
 # 自由度计算
 def free(l):
     lens = len(l)
@@ -72,10 +73,11 @@ def free(l):
         return result
     
 
-def main():
-    sentences = break_sentence(s)
+def main(string, minwords=2, maxwords=5):
+    sentences = break_sentence(string)
     for sentence in sentences:
-        break_word(sentence)
+        if sentence:
+            break_word(sentence)
 
     # 计算自由度
     for k, v in CON.items():
@@ -84,14 +86,15 @@ def main():
         lf = free(v[1])
         rf = free(v[2])
         CON[k].append(lf if lf > rf else rf)
-    
+
     # 计算凝结度
     coagulability()
-    
-    # 打印结果
+
+    # 过滤结果输出
     for k, v in CON.items():
-        print(k, v)
+        if v[0] > 1 and len(k) >= minwords:
+            print(k, v[0], v[-2], v[-1])
         
 
 if __name__ == '__main__':
-    main()
+    main("""电影院的电影影院的电影""")
