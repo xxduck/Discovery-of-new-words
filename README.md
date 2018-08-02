@@ -6,3 +6,6 @@
 ## 待完善
 - 优化代码结构
 - 优化逻辑
+
+### 理论支持
+  http://www.matrix67.com/blog/archives/5044
